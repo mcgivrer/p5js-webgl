@@ -1,7 +1,9 @@
 var entities = [];
 
 function setup() {
-  createCanvas(640, 480, WEBGL);
+
+  let canvas = createCanvas(720, 480, WEBGL);
+  canvas.parent('sketch-container')
   initialize();
 }
 
