@@ -13,7 +13,9 @@
   "author": "Frédéric Delorme",
   "license": "MIT",
   "dependencies": {
-    "p5": "^1.3.0",
-    "parcel-bundler": "^1.12.5"
+    "p5": "^1.3.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3"
   }
 }
