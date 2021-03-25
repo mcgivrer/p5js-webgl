@@ -1,31 +1,41 @@
 import p5 from 'p5';
-import {ENTITY_TYPE, Entity} from '/modules/entity.mjs';
+import {ENTITY_TYPE, Entity} from '/modules/entity';
 
-const sketch = (s) => {
+const sketch = (s)=>{
 
   s.entities = []
 
-  s.setup = () => {
+  s.setup = ()=>{
 
-    let canvas = s.createCanvas(720, 480, s.WEBGL);
+    let canvas = s.createCanvas(600, 400, s.WEBGL);
     canvas.parent('sketch-container')
     s.initialize();
   }
 
-  s.initialize = () => {
-    for (var i = 0; i < 200; i++) {
-      let entity = new Entity(s.random(0, s.width),s.random(0, s.height),s.random(4, 16),s.random(4, 16));
+  s.initialize = ()=>{
+    for (var i = 0; i < 20; i++) {
+      let entity = new Entity("ball_" + i,
+        // Position
+        s.random(0, s.width),
+        s.random(0, s.height),
+        s.random(0, s.height),
+        // Size
+        s.random(4, 16),
+        s.random(4, 16),
+        s.random(4, 16)
+        );
       entity.setSpeed(s.random(-5, 5), s.random(-5, 5));
       entity.setRSpeed(s.random(-0.05, 0.05))
       entity.setColor(s.random(0, 255), s.random(0, 255), s.random(0, 255))
-      entity.type = ENTITY_TYPE.CIRCLE;
+      entity.type = ENTITY_TYPE.SPHERE;
       s.entities.push(entity);
     }
-
   }
 
-  s.draw = () => {
-    s.rectMode(s.CENTER);
+  s.draw = ()=>{
+    //s.rectMode(s.CENTER);
+    s.ambientLight(255);
+    s.ambientMaterial(255, 102, 94);
     s.translate(-s.width / 2, -s.height / 2);
     s.background(51);
     s.update();
@@ -33,14 +43,14 @@ const sketch = (s) => {
     s.render();
   }
 
-  s.update = () => {
+  s.update = ()=>{
     s.entities.forEach((e)=>{
       e.update(s);
     }
     );
   }
 
-  s.constrainToViewPort = () => {
+  s.constrainToViewPort = ()=>{
     s.entities.forEach((e)=>{
       var w = 0
         , h = 0;
@@ -50,36 +60,48 @@ const sketch = (s) => {
         h = 1;
         break;
       case ENTITY_TYPE.CIRCLE:
-        w = e.w;
-        h = e.w;
+      case ENTITY_TYPE.SPHERE:
+        w = e.size.w;
+        h = e.size.w;
         break;
       case ENTITY_TYPE.RECTANGLE:
-        w = e.w;
-        h = e.h;
+      case ENTITY_TYPE.BOX:
+        w = e.size.w;
+        h = e.size.h;
         break;
       }
-      if (e.x > s.width - w) {
-        e.x = s.width - w
-        e.dx = -e.dx;
+      // Axe X
+      if (e.position.x > s.width - w) {
+        e.position.x = s.width - w
+        e.speed.x = -e.speed.x;
       }
-      if(e.x < 0){
-        e.x = 0
-        e.dx = -e.dx;
+      if (e.position.x < 0) {
+        e.position.x = 0
+        e.speed.x = -e.speed.x;
       }
-      if (e.y > s.height - h){
-        e.y = s.height - h
-        e.dy = -e.dy;
-      } 
-      if (e.y < 0) {
-        e.y = 0
-        e.dy = -e.dy;
+      // Axe Y
+      if (e.position.y > s.height - h) {
+        e.position.y = s.height - h
+        e.speed.y = -e.speed.y;
       }
-
+      if (e.position.y < 0) {
+        e.position.y = 0
+        e.speed.y = -e.speed.y;
+      }
+      // Axe Z
+      if (e.position.s > s.height - h) {
+        e.position.s = s.height - h
+        e.speed.z = -e.speed.z;
+      }
+      if (e.position.z < 0) {
+        e.position.z = 0
+        e.speed.z = -e.speed.z;
+      }
     }
     )
   }
 
-  s.render = () => {
+  s.render = ()=>{
     s.entities.forEach((e)=>{
       s.push();
       e.draw(s);
@@ -88,7 +110,7 @@ const sketch = (s) => {
     );
   }
 
-};
+}
+;
 
 let p5webgl = new p5(sketch,'sketch-container');
-

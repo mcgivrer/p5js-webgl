@@ -21241,34 +21241,57 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var ENTITY_TYPE = {
   RECTANGLE: 1,
   CIRCLE: 2,
-  POINT: 3
+  POINT: 3,
+  SPHERE: 4,
+  BOX: 5
 };
 exports.ENTITY_TYPE = ENTITY_TYPE;
+var entity_counter = 0;
 
 var Entity =
 /*#__PURE__*/
 function () {
   function Entity() {
-    var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-    var w = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 8;
-    var h = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 8;
+    var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "noname_" + entity_conuter++;
+    var x = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var y = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var z = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var w = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 8;
+    var h = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 8;
+    var l = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 0;
 
     _classCallCheck(this, Entity);
 
     // position
-    this.x = x;
-    this.y = y;
-    this.angle = 0;
+    this.position = {
+      x: x,
+      y: y,
+      z: z
+    };
+    this.rotation = {
+      rx: 0,
+      ry: 0,
+      rz: 0
+    };
     this.type = ENTITY_TYPE.RECTANGLE; //size
 
-    this.w = w;
-    this.h = h; // velocity
+    this.size = {
+      w: w,
+      h: h,
+      l: l // velocity
 
-    this.dx = 0;
-    this.dy = 0;
-    this.dr = 0; // drawing priorities
+    };
+    this.speed = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+    this.rspeed = {
+      rx: 0,
+      ry: 0,
+      rz: 0 // drawing priorities
 
+    };
     this.priority = 1;
     this.layer = 1; // colors
 
@@ -21283,13 +21306,15 @@ function () {
   _createClass(Entity, [{
     key: "setSpeed",
     value: function setSpeed(dx, dy) {
-      this.dx = dx;
-      this.dy = dy;
+      this.speed.x = dx;
+      this.speed.y = dy;
     }
   }, {
     key: "setRSpeed",
-    value: function setRSpeed(dr) {
-      this.dr = dr;
+    value: function setRSpeed(rx, ry, rz) {
+      this.rspeed.x = rx;
+      this.rspeed.y = ry;
+      this.rspeed.z = rz;
     }
   }, {
     key: "setColor",
@@ -21306,29 +21331,41 @@ function () {
   }, {
     key: "update",
     value: function update(s) {
-      this.x += this.dx;
-      this.y += this.dy;
-      this.angle += this.dr;
+      this.position.x += this.speed.x;
+      this.position.y += this.speed.y;
+      this.position.z += this.speed.z;
+      this.rotation.rx += this.rspeed.rx;
+      this.rotation.ry += this.rspeed.ry;
+      this.rotation.rz += this.rspeed.rz;
     }
   }, {
     key: "draw",
     value: function draw(s) {
-      s.noStroke();
       s.fill(this.color.r, this.color.g, this.color.b);
-      s.translate(this.x + this.w / 2, this.y + this.h / 2);
-      s.rotateZ(this.angle);
+      s.translate(this.position.x + this.size.w / 2, this.position.y + this.size.h / 2, this.position.z + this.size.l / 2);
+      s.rotateX(this.rotation.rx);
+      s.rotateY(this.rotation.ry);
+      s.rotateZ(this.rotation.rz);
 
       switch (this.type) {
         case ENTITY_TYPE.RECTANGLE:
-          s.rect(0, 0, this.w, this.h);
+          s.rect(0, 0, this.size.w, this.size.h);
           break;
 
         case ENTITY_TYPE.CIRCLE:
-          s.circle(0, 0, this.w);
+          s.circle(0, 0, this.size.w);
           break;
 
         case ENTITY_TYPE.POINT:
-          s.point(this.x, this.y);
+          s.point(this.position.x, this.positon.y);
+          break;
+
+        case ENTITY_TYPE.SPHERE:
+          s.sphere(this.size.w / 2);
+          break;
+
+        case ENTITY_TYPE.BOX:
+          s.box(this.size.w / 2, this.size.h / 2, this.size.l / 2);
           break;
       }
     }
@@ -21343,7 +21380,7 @@ exports.Entity = Entity;
 
 var _p = _interopRequireDefault(require("p5"));
 
-var _entity = require("/modules/entity.mjs");
+var _entity = require("/modules/entity");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21351,24 +21388,28 @@ var sketch = function sketch(s) {
   s.entities = [];
 
   s.setup = function () {
-    var canvas = s.createCanvas(720, 480, s.WEBGL);
+    var canvas = s.createCanvas(600, 400, s.WEBGL);
     canvas.parent('sketch-container');
     s.initialize();
   };
 
   s.initialize = function () {
-    for (var i = 0; i < 200; i++) {
-      var entity = new _entity.Entity(s.random(0, s.width), s.random(0, s.height), s.random(4, 16), s.random(4, 16));
+    for (var i = 0; i < 20; i++) {
+      var entity = new _entity.Entity("ball_" + i, // Position
+      s.random(0, s.width), s.random(0, s.height), s.random(0, s.height), // Size
+      s.random(4, 16), s.random(4, 16), s.random(4, 16));
       entity.setSpeed(s.random(-5, 5), s.random(-5, 5));
       entity.setRSpeed(s.random(-0.05, 0.05));
       entity.setColor(s.random(0, 255), s.random(0, 255), s.random(0, 255));
-      entity.type = _entity.ENTITY_TYPE.CIRCLE;
+      entity.type = _entity.ENTITY_TYPE.SPHERE;
       s.entities.push(entity);
     }
   };
 
   s.draw = function () {
-    s.rectMode(s.CENTER);
+    //s.rectMode(s.CENTER);
+    s.ambientLight(255);
+    s.ambientMaterial(255, 102, 94);
     s.translate(-s.width / 2, -s.height / 2);
     s.background(51);
     s.update();
@@ -21394,34 +21435,49 @@ var sketch = function sketch(s) {
           break;
 
         case _entity.ENTITY_TYPE.CIRCLE:
-          w = e.w;
-          h = e.w;
+        case _entity.ENTITY_TYPE.SPHERE:
+          w = e.size.w;
+          h = e.size.w;
           break;
 
         case _entity.ENTITY_TYPE.RECTANGLE:
-          w = e.w;
-          h = e.h;
+        case _entity.ENTITY_TYPE.BOX:
+          w = e.size.w;
+          h = e.size.h;
           break;
+      } // Axe X
+
+
+      if (e.position.x > s.width - w) {
+        e.position.x = s.width - w;
+        e.speed.x = -e.speed.x;
       }
 
-      if (e.x > s.width - w) {
-        e.x = s.width - w;
-        e.dx = -e.dx;
+      if (e.position.x < 0) {
+        e.position.x = 0;
+        e.speed.x = -e.speed.x;
+      } // Axe Y
+
+
+      if (e.position.y > s.height - h) {
+        e.position.y = s.height - h;
+        e.speed.y = -e.speed.y;
       }
 
-      if (e.x < 0) {
-        e.x = 0;
-        e.dx = -e.dx;
+      if (e.position.y < 0) {
+        e.position.y = 0;
+        e.speed.y = -e.speed.y;
+      } // Axe Z
+
+
+      if (e.position.s > s.height - h) {
+        e.position.s = s.height - h;
+        e.speed.z = -e.speed.z;
       }
 
-      if (e.y > s.height - h) {
-        e.y = s.height - h;
-        e.dy = -e.dy;
-      }
-
-      if (e.y < 0) {
-        e.y = 0;
-        e.dy = -e.dy;
+      if (e.position.z < 0) {
+        e.position.z = 0;
+        e.speed.z = -e.speed.z;
       }
     });
   };
@@ -21436,7 +21492,7 @@ var sketch = function sketch(s) {
 };
 
 var p5webgl = new _p.default(sketch, 'sketch-container');
-},{"p5":"node_modules/p5/lib/p5.min.js","/modules/entity.mjs":"modules/entity.mjs"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"p5":"node_modules/p5/lib/p5.min.js","/modules/entity":"modules/entity.mjs"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -21464,7 +21520,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40285" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38433" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
