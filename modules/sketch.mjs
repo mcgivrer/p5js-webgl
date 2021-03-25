@@ -58,10 +58,20 @@ const sketch = (s) => {
         h = e.h;
         break;
       }
-      if ((e.x > s.width - w) | (e.x < 0)) {
+      if (e.x > s.width - w) {
+        e.x = s.width - w
         e.dx = -e.dx;
       }
-      if ((e.y > s.height - h) | (e.y < 0)) {
+      if(e.x < 0){
+        e.x = 0
+        e.dx = -e.dx;
+      }
+      if (e.y > s.height - h){
+        e.y = s.height - h
+        e.dy = -e.dy;
+      } 
+      if (e.y < 0) {
+        e.y = 0
         e.dy = -e.dy;
       }
 

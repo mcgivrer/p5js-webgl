@@ -21404,11 +21404,23 @@ var sketch = function sketch(s) {
           break;
       }
 
-      if (e.x > s.width - w | e.x < 0) {
+      if (e.x > s.width - w) {
+        e.x = s.width - w;
         e.dx = -e.dx;
       }
 
-      if (e.y > s.height - h | e.y < 0) {
+      if (e.x < 0) {
+        e.x = 0;
+        e.dx = -e.dx;
+      }
+
+      if (e.y > s.height - h) {
+        e.y = s.height - h;
+        e.dy = -e.dy;
+      }
+
+      if (e.y < 0) {
+        e.y = 0;
         e.dy = -e.dy;
       }
     });
@@ -21452,7 +21464,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35011" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40285" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
