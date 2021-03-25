@@ -83,6 +83,7 @@ class Entity {
   }
 
   draw(s) {
+    s.noStroke();
     s.fill(this.color.r, this.color.g, this.color.b);
     
     s.translate(
