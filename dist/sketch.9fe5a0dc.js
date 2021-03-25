@@ -21363,13 +21363,13 @@ var sketch = function sketch(s) {
       entity.setRSpeed(s.random(-0.05, 0.05));
       entity.setColor(s.random(0, 255), s.random(0, 255), s.random(0, 255));
       entity.type = _entity.ENTITY_TYPE.CIRCLE;
-      entities.push(entity);
+      s.entities.push(entity);
     }
   };
 
   s.draw = function () {
-    s.rectMode(CENTER);
-    s.translate(-width / 2, -height / 2);
+    s.rectMode(s.CENTER);
+    s.translate(-s.width / 2, -s.height / 2);
     s.background(51);
     s.update();
     s.constrainToViewPort();
@@ -21377,13 +21377,13 @@ var sketch = function sketch(s) {
   };
 
   s.update = function () {
-    entities.forEach(function (e) {
+    s.entities.forEach(function (e) {
       e.update(s);
     });
   };
 
   s.constrainToViewPort = function () {
-    entities.forEach(function (e) {
+    s.entities.forEach(function (e) {
       var w = 0,
           h = 0;
 
@@ -21404,21 +21404,21 @@ var sketch = function sketch(s) {
           break;
       }
 
-      if (e.x > width - w | e.x < 0) {
+      if (e.x > s.width - w | e.x < 0) {
         e.dx = -e.dx;
       }
 
-      if (e.y > height - h | e.y < 0) {
+      if (e.y > s.height - h | e.y < 0) {
         e.dy = -e.dy;
       }
     });
   };
 
   s.render = function () {
-    entities.forEach(function (e) {
-      push();
+    s.entities.forEach(function (e) {
+      s.push();
       e.draw(s);
-      pop();
+      s.pop();
     });
   };
 };
@@ -21452,7 +21452,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44901" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35011" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

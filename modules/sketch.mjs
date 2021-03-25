@@ -19,14 +19,14 @@ const sketch = (s) => {
       entity.setRSpeed(s.random(-0.05, 0.05))
       entity.setColor(s.random(0, 255), s.random(0, 255), s.random(0, 255))
       entity.type = ENTITY_TYPE.CIRCLE;
-      entities.push(entity);
+      s.entities.push(entity);
     }
 
   }
 
   s.draw = () => {
-    s.rectMode(CENTER);
-    s.translate(-width / 2, -height / 2);
+    s.rectMode(s.CENTER);
+    s.translate(-s.width / 2, -s.height / 2);
     s.background(51);
     s.update();
     s.constrainToViewPort();
@@ -34,14 +34,14 @@ const sketch = (s) => {
   }
 
   s.update = () => {
-    entities.forEach((e)=>{
+    s.entities.forEach((e)=>{
       e.update(s);
     }
     );
   }
 
   s.constrainToViewPort = () => {
-    entities.forEach((e)=>{
+    s.entities.forEach((e)=>{
       var w = 0
         , h = 0;
       switch (e.type) {
@@ -58,10 +58,10 @@ const sketch = (s) => {
         h = e.h;
         break;
       }
-      if ((e.x > width - w) | (e.x < 0)) {
+      if ((e.x > s.width - w) | (e.x < 0)) {
         e.dx = -e.dx;
       }
-      if ((e.y > height - h) | (e.y < 0)) {
+      if ((e.y > s.height - h) | (e.y < 0)) {
         e.dy = -e.dy;
       }
 
@@ -70,10 +70,10 @@ const sketch = (s) => {
   }
 
   s.render = () => {
-    entities.forEach((e)=>{
-      push();
+    s.entities.forEach((e)=>{
+      s.push();
       e.draw(s);
-      pop();
+      s.pop();
     }
     );
   }
