@@ -1,0 +1,18 @@
+/* style.css */
+html, body {
+  height: 100%;
+  background-color: #000;
+  color: #fff;
+}
+
+body {
+  margin: 30px;
+}
+
+#sketch-container{
+  width:720px;
+  height:480px;
+  border:1px solid #369;
+}
+
+/*# sourceMappingURL=/main.d2070829.css.map */

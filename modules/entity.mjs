@@ -46,27 +46,29 @@ class Entity {
     this.color.a = a;
   }
 
-  update() {
+  update(s) {
     this.x += this.dx;
     this.y += this.dy;
     this.angle += this.dr;
   }
 
-  draw() {
-    noStroke();
-    fill(this.color.r, this.color.g, this.color.b);
-    translate(this.x + (this.w / 2), this.y + (this.h / 2));
-    rotateZ(this.angle);
+  draw(s) {
+    s.noStroke();
+    s.fill(this.color.r, this.color.g, this.color.b);
+    s.translate(this.x + (this.w / 2), this.y + (this.h / 2));
+    s.rotateZ(this.angle);
     switch (this.type) {
     case ENTITY_TYPE.RECTANGLE:
-      rect(0, 0, this.w, this.h);
+      s.rect(0, 0, this.w, this.h);
       break
     case ENTITY_TYPE.CIRCLE:
-      circle(0, 0, this.w);
+      s.circle(0, 0, this.w);
       break
     case ENTITY_TYPE.POINT:
-      point(this.x, this.y);
+      s.point(this.x, this.y);
       break
     }
   }
 }
+
+export {ENTITY_TYPE, Entity};
